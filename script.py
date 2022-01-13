@@ -1,16 +1,15 @@
-import time
+from flask import Flask, jsonify, request, send_file
+
+app = Flask(__name__)
+
+@app.route('/')
+def getInit():  
+  return 'Estoy vivo'
 
 
-#our function for counting from 0-20
-def counting():
-    for i in range(0,21):
-        if i==20:
-            print("counting at: "+str(i))
-            print("Done counting...")
-        else:
-            print("counting at: "+str(i))
-            time.sleep(5) #sleep for 5 seconds
+@app.route('/ping')
+def getInit():  
+  return 'pong'
 
-#our main function
 if __name__ == '__main__':
-    counting() #call our counting method
+  app.run(debug=True, port=4000)
