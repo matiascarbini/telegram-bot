@@ -12,24 +12,25 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
-def start(update, context):
-    """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+def start(update, context):    
+    update.message.reply_text('Hola!')
 
 def help(update, context):
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text('Dejame ver como te ayudo!')
+
+def hola(update, context):
+    update.message.reply_text('Mostrito, como andas?? que contas???')
+
+def chau(update, context):
+    update.message.reply_text('Nos vemos mostro!!')    
 
 def echo(update, context):
-    """Echo the user message."""
     update.message.reply_text(update.message.text)
 
 def error(update, context):
-    """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 def main():
-    """Start the bot."""
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
@@ -40,6 +41,8 @@ def main():
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("hola", hola))
+    dp.add_handler(CommandHandler("chau", chau))
     dp.add_handler(CommandHandler("help", help))
 
     # on noncommand i.e message - echo the message on Telegram
