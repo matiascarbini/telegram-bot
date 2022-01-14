@@ -8,7 +8,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TOKEN')
-PUERTO = int(os.environ.get('PORT', 5000))
+PORT = int(os.environ.get('PORT', 5000))
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
