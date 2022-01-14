@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_file
+from flask import Flask
 
 app = Flask(__name__)
 
@@ -8,8 +8,8 @@ def getInit():
 
 
 @app.route('/ping')
-def getInit():  
+def getPing():  
   return 'pong'
 
 if __name__ == '__main__':
-  app.run(debug=True, port=80)
+  app.run(debug=False, port=4001)
