@@ -1,15 +1,13 @@
-from flask import Flask
+import telebot
+TOKEN = "5042048721:AAHEhVxseWgIgDWmRZqZjSWa1MZzO9ONEr8"
+bot = telebot.TeleBot(TOKEN)
 
-app = Flask(__name__)
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    bot.reply_to(message, "¿Me ha llamado maestro?")
 
-@app.route('/')
-def getInit():  
-  return 'Estoy vivo'
-
-
-@app.route('/ping')
-def getPing():  
-  return 'pong'
-
-if __name__ == '__main__':
-  app.run(debug=False, port=4000)
+@bot.message_handler(func=lambda message: True)
+def echo_all(message):
+    bot.reply_to(message, message.text)
+    
+bot.polling()
