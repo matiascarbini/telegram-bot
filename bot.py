@@ -8,7 +8,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TOKEN')
-PORT = int(os.environ.get('PORT', 5000))
+PORT = int(os.environ.get('PORT', '5000'))
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
@@ -50,9 +50,11 @@ def main():
 
     # Start the Bot
     #updater.start_polling()
-    updater.start_webhook(listen="0.0.0.0", port=int(PORT), url_path=TOKEN)
-    updater.bot.setWebhook('https://carsoft-telegram-bot.herokuapp.com/' + TOKEN)    
-
+    updater.start_webhook(listen="0.0.0.0", 
+                          port=PORT, 
+                          url_path=TOKEN,
+                          webhook_url="https://carsoft-telegram-bot.herokuapp.com/" + TOKEN)
+  
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
