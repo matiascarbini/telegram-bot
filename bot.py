@@ -3,32 +3,12 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 TOKEN = os.environ.get('TOKEN')
 PORT = int(os.environ.get('PORT', '5000'))
-
-# Define a few command handlers. These usually take the two arguments update and
-# context. Error handlers also receive the raised TelegramError object in error.
-def start(update, context):    
-    update.message.reply_text('Hola!')
-
-def help(update, context):
-    update.message.reply_text('Dejame ver como te ayudo!')
-
-def hola(update, context):
-    update.message.reply_text('Mostrito, como andas?? que contas???')
-
-def chau(update, context):
-    update.message.reply_text('Nos vemos mostro!!')    
-
-def echo(update, context):
-    update.message.reply_text(update.message.text)
-
-def error(update, context):
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
+URL_BASE = os.environ.get('URL_BASE')
 
 def main():
     # Create the Updater and pass it your bot's token.
@@ -56,12 +36,32 @@ def main():
     updater.start_webhook(listen="0.0.0.0", 
                           port=PORT, 
                           url_path=TOKEN,
-                          webhook_url="https://carsoft-telegram-bot.herokuapp.com/" + TOKEN)
+                          webhook_url=URL_BASE + "/" + TOKEN)
   
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
+
+# Define a few command handlers. These usually take the two arguments update and
+# context. Error handlers also receive the raised TelegramError object in error.
+def start(update, context):    
+    update.message.reply_text('Hola!')
+
+def help(update, context):
+    update.message.reply_text('Dejame ver como te ayudo!')
+
+def hola(update, context):
+    update.message.reply_text('Mostrito, como andas?? que contas???')
+
+def chau(update, context):
+    update.message.reply_text('Nos vemos mostro!!')    
+
+def echo(update, context):
+    update.message.reply_text(update.message.text)
+
+def error(update, context):
+    logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 if __name__ == '__main__':
     main()
