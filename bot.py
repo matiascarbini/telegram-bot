@@ -190,6 +190,7 @@ def solucionesDetail(update: Update, context: CallbackContext):
     f.close()
 
 def exec_br(update: Update, context: CallbackContext):
+  try:
     context.bot.send_message(
       chat_id = update.effective_chat.id,
       text = "✂️ Borrando fondo de la imagen, tardará unos segundos...",
@@ -219,8 +220,16 @@ def exec_br(update: Update, context: CallbackContext):
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
       )      
+  except:
+    context.bot.send_message(
+      chat_id = update.effective_chat.id,
+      text = "Algo salio mal!! intentá nuevamente",
+      reply_markup=reply_markup,
+      parse_mode=ParseMode.HTML
+    )        
 
 def exec_sa(update: Update, context: CallbackContext):
+  try:
     context.bot.send_message(
       chat_id = update.effective_chat.id,
       text = "🔍 Analizando texto, aguardá unos segundos...",
@@ -237,28 +246,35 @@ def exec_sa(update: Update, context: CallbackContext):
     res = json.loads(str(r.text))
     
     if r.status_code == 200:
-        if res["sentimiento"] == 'POS':
-          textResult = "<i>" + text + "</i> \n<b>POSITIVO</b>  --> " + res["probabilidades"]["positivo"] 
+      if res["sentimiento"] == 'POS':
+        textResult = "<i>" + text + "</i> \n<b>POSITIVO</b>  --> " + res["probabilidades"]["positivo"] 
+      
+      if res["sentimiento"] == 'NEU':
+        textResult = "<i>" + text + "</i> \n<b>NEUTRAL</b>  --> " + res["probabilidades"]["neutral"] 
         
-        if res["sentimiento"] == 'NEU':
-          textResult = "<i>" + text + "</i> \n<b>NEUTRAL</b>  --> " + res["probabilidades"]["neutral"] 
-          
-        if res["sentimiento"] == 'NEG':
-          textResult = "<i>" + text + "</i> \n<b>NEGATIVO</b>  --> " + res["probabilidades"]["negativo"] 
-          
-        context.bot.send_message(
-          chat_id = update.effective_chat.id,
-          text = textResult,
-          reply_markup=reply_markup,
-          parse_mode=ParseMode.HTML
-        )
+      if res["sentimiento"] == 'NEG':
+        textResult = "<i>" + text + "</i> \n<b>NEGATIVO</b>  --> " + res["probabilidades"]["negativo"] 
+        
+      context.bot.send_message(
+        chat_id = update.effective_chat.id,
+        text = textResult,
+        reply_markup=reply_markup,
+        parse_mode=ParseMode.HTML
+      )
     else:      
-        context.bot.send_message(
-          chat_id = update.effective_chat.id,
-          text = "Algo salio mal!! intentá nuevamente",
-          reply_markup=reply_markup,
-          parse_mode=ParseMode.HTML
-        )      
+      context.bot.send_message(
+        chat_id = update.effective_chat.id,
+        text = "Algo salio mal!! intentá nuevamente",
+        reply_markup=reply_markup,
+        parse_mode=ParseMode.HTML
+      ) 
+  except:
+    context.bot.send_message(
+      chat_id = update.effective_chat.id,
+      text = "Algo salio mal!! intentá nuevamente",
+      reply_markup=reply_markup,
+      parse_mode=ParseMode.HTML
+    )          
 
 def getKeyboard(renderKeyboard='init'):
     f = open(DATA_JSON)    
