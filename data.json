@@ -1,0 +1,95 @@
+{
+  "start": {
+    "reference": "start",
+    "title": "👈 Inicio",
+    "text": "Bienvenidos a nuestro <b>bot</b> 🤖  <i>askdjaksd</i> \n\n askdjaskd <u>askdj</u> \n\n https://acortar.link/o4HItL",
+    "show": false
+  },
+  "nosotros": {
+    "reference": "nosotros",
+    "title": "🏢 Nosotros",
+    "text": "Somos una aplicación de testing",
+    "show": true
+  },
+  "soluciones": {
+    "reference": "soluciones",
+    "title": "🚀 Soluciones",
+    "text": "Estas son nuestras soluciones",
+    "show": true,
+    "detail": [
+      {
+        "reference": "solucion_1",
+        "title": "🔘 Sitios Web",
+        "text": "Desarrollo de sitios web"
+      },
+      {
+        "reference": "solucion_2",
+        "title": "🔘 Ecommerce",
+        "text": "Desarrollo de ecommerce"
+      },
+      {
+        "reference": "solucion_3",
+        "title": "🔘 Iteligencia Artifical",
+        "text": "Desarrollamos herramientas a medida que solucionanan el problema"
+      }                  
+    ]
+  },
+  "productos": {
+    "reference": "productos",
+    "title": "📦 Productos",
+    "text": "Estos son nuestros productos",
+    "show": true,
+    "detail": [
+      {
+        "code": "prod_1",
+        "title": "Producto 1",
+        "text": "Este es un casco hermoso",
+        "image": "https://acortar.link/o4HItL",
+        "url": "https://site.cid.s1.carsoft.com.ar/productos/aero-2-negro-brillo",
+        "currency": "USD",
+        "price": 1250
+      },
+      {
+        "code": "prod_2",
+        "title": "Producto 2",
+        "text": "Este es un casco mas tranqui",
+        "image": "https://acortar.link/o4HItL",
+        "url": "https://site.cid.s1.carsoft.com.ar/productos/aero-2-negro-brillo",
+        "currency": "ARS",
+        "price": 120350
+      }        
+    ]    
+  },  
+  "herramientas": {
+    "reference": "herramientas",
+    "title": "🔧 Herramientas",
+    "text": "Ejemplos de algunas tecnologias que implementamos",
+    "show": true,
+    "detail": [
+      {
+        "reference": "background-remove",
+        "title": "Eliminar fondo de imágenes",
+        "text": "Para activar la funcionalidad, ejecutar el siguiente codigo",
+        "command": "/exec_br url_imagen"
+      },
+      {
+        "reference": "sentiment-analysis",
+        "title": "Analisis de sentimiento",
+        "text": "Para activar la funcionalidad, ejecutar el siguiente codigo",
+        "command": "/exec_sa texto" 
+      }        
+    ]     
+  },  
+  "contacto": {
+    "reference": "contacto",
+    "title": "📞 Contacto",
+    "text": "Dejenos su contacto",
+    "show": true
+  },  
+  "help": {
+    "reference": "help",
+    "title": "👩‍💻 Ayuda",
+    "text": "Vamos a ayudarlo, diganos que problemas tiene",
+    "show": false
+  }
+}
