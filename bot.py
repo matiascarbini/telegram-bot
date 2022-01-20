@@ -2,6 +2,7 @@ import logging
 import os
 import json
 import requests
+import re
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, CallbackContext
 
@@ -89,7 +90,7 @@ def productos(update, context):
 
     context.bot.send_message(
       chat_id = update.effective_chat.id,
-      text = 'Listado completo de productos',
+      text = data['productos']['response']['end_list_products'],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
     )
@@ -149,6 +150,7 @@ def help(update, context):
     )
     f.close()   
 
+
 def clickButton(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
@@ -189,11 +191,15 @@ def solucionesDetail(update: Update, context: CallbackContext):
         )
     f.close()
 
+
 def exec_br(update: Update, context: CallbackContext):
   try:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+        
     context.bot.send_message(
       chat_id = update.effective_chat.id,
-      text = "✂️ Borrando fondo de la imagen, tardará unos segundos...",
+      text = data['herramientas']['detail'][0]["response"]["after_request"],
       parse_mode=ParseMode.HTML
     )
       
@@ -209,30 +215,40 @@ def exec_br(update: Update, context: CallbackContext):
     if r.status_code == 200:          
       context.bot.send_message(
         chat_id = update.effective_chat.id,
-        text = "Te envío la imagen sin fondo " + res,
+        text = data['herramientas']['detail'][0]["response"]["request"] + ' ' + res,
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
       )
     else:
       context.bot.send_message(
         chat_id = update.effective_chat.id,
-        text = "Algo salio mal!! intentá nuevamente",
+        text = data['herramientas']['detail'][0]["response"]["error"],
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
-      )      
+      )  
+      
+    f.close()    
   except:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+    
     context.bot.send_message(
       chat_id = update.effective_chat.id,
-      text = "Algo salio mal!! intentá nuevamente",
+      text = data['herramientas']['detail'][0]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
     )        
+    
+    f.close()    
 
 def exec_sa(update: Update, context: CallbackContext):
   try:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+        
     context.bot.send_message(
       chat_id = update.effective_chat.id,
-      text = "🔍 Analizando texto, aguardá unos segundos...",
+      text = data['herramientas']['detail'][1]["response"]["after_request"],
       parse_mode=ParseMode.HTML
     )
     
@@ -263,18 +279,26 @@ def exec_sa(update: Update, context: CallbackContext):
       )
     else:      
       context.bot.send_message(
-        chat_id = update.effective_chat.id,
-        text = "Algo salio mal!! intentá nuevamente",
+        chat_id = update.effective_chat.id,        
+        text = data['herramientas']['detail'][1]["response"]["error"],
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
       ) 
+      
+    f.close()
   except:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+        
     context.bot.send_message(
       chat_id = update.effective_chat.id,
-      text = "Algo salio mal!! intentá nuevamente",
+      text = data['herramientas']['detail'][1]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
-    )          
+    )    
+    
+    f.close()      
+
 
 def getKeyboard(renderKeyboard='init'):
     f = open(DATA_JSON)    
@@ -324,7 +348,69 @@ def getKeyboard(renderKeyboard='init'):
 
 
 def echo(update, context):
-    update.message.reply_text(update.message.text)
+    f = open(DATA_JSON)    
+    data = json.load(f)
+      
+    bot = context.bot
+    
+    context.user_data["nombre"] = update.message.chat.first_name
+    context.user_data["apellido"] = update.message.chat.last_name
+    
+    email = getEmail(update.message.text)
+    if email:
+      context.user_data["email"] = email
+      
+    phone = getPhone(update.message.text)
+    if phone:
+      context.user_data["telefono"] = phone
+    
+    if not email and not phone:
+      reply_markup = getKeyboard('init')
+      bot.send_message(
+        chat_id=update.message.chat_id, 
+        text=data['contacto']["response"]['default'],
+        parse_mode=ParseMode.HTML,
+        reply_markup=reply_markup
+      )
+    else:
+      if not 'email' in context.user_data.keys():
+        context.user_data["email"] = '' 
+        
+      if not 'telefono' in context.user_data.keys():        
+        context.user_data["telefono"] = '' 
+      
+      if context.user_data["email"] and not context.user_data["telefono"]:
+        text=data['contacto']["response"]['only_email']
+      elif not context.user_data["email"] and context.user_data["telefono"]:
+        text=data['contacto']["response"]['only_phone']
+      else:
+        text=data['contacto']["response"]['all']
+      
+      bot.send_message(
+        chat_id=update.message.chat_id, 
+        text=text,
+        parse_mode=ParseMode.HTML
+      )
+      
+      f.close()
+  
+def getEmail(text):
+  email = ''
+  arrData = text.split()
+  for item in arrData:
+    if re.match('^[(a-z0-9\_\-\.)]+@[(a-z0-9\_\-\.)]+\.[(a-z)]{2,15}$',item.lower()):
+      email = item
+  
+  return email
+  
+def getPhone(text):
+  phone = ''
+  arrData = text.split()
+  for item in arrData:    
+    if all([x.isdigit() for x in item.split("-")]) and len(item)>5:
+      phone = item
+        
+  return phone
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -338,20 +424,28 @@ def main():
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
-
+    
+    #abro el json de contenido
+    f = open(DATA_JSON)    
+    data = json.load(f)
+    
     # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))    
-    dp.add_handler(CommandHandler("nosotros", nosotros))
-    dp.add_handler(CommandHandler("soluciones", soluciones))    
-    dp.add_handler(CommandHandler("productos", productos))    
-    dp.add_handler(CommandHandler("contacto", contacto))    
-    dp.add_handler(CommandHandler("herramientas", herramientas))    
-    dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler(data['start']['reference'], start))    
+    dp.add_handler(CommandHandler(data['nosotros']['reference'], nosotros))
+    dp.add_handler(CommandHandler(data['soluciones']['reference'], soluciones))    
+    dp.add_handler(CommandHandler(data['productos']['reference'], productos))    
+    dp.add_handler(CommandHandler(data['contacto']['reference'], contacto))    
+    dp.add_handler(CommandHandler(data['herramientas']['reference'], herramientas))    
+    dp.add_handler(CommandHandler(data['help']['reference'], help))
+    dp.add_handler(CommandHandler(data['herramientas']["detail"][0]['reference'], exec_br))
+    dp.add_handler(CommandHandler(data['herramientas']["detail"][1]['reference'], exec_sa))
+    
+    #cierro el json de contenido
+    f.close()
+    
+    # capturo el click
     updater.dispatcher.add_handler(CallbackQueryHandler(clickButton))
-
-    dp.add_handler(CommandHandler("exec_br", exec_br))
-    dp.add_handler(CommandHandler("exec_sa", exec_sa))
-
+    
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
 

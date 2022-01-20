@@ -39,6 +39,9 @@
     "title": "📦 Productos",
     "text": "Estos son nuestros productos",
     "show": true,
+    "response": {
+      "end_list_products": "🔚 Listado completo de productos"
+    },
     "detail": [
       {
         "code": "prod_1",
@@ -67,16 +70,25 @@
     "show": true,
     "detail": [
       {
-        "reference": "background-remove",
+        "reference": "fondo",
         "title": "Eliminar fondo de imágenes",
         "text": "Para activar la funcionalidad, ejecutar el siguiente codigo",
-        "command": "/exec_br url_imagen"
+        "command": "/fondo url_imagen",
+        "response": {
+          "after_request": "✂️ Borrando fondo de la imagen, tardará unos segundos...",
+          "request": "Te envío la imagen sin fondo",
+          "error": "❌ Algo salio mal!! intentá nuevamente"
+        }
       },
       {
-        "reference": "sentiment-analysis",
+        "reference": "sentimiento",
         "title": "Analisis de sentimiento",
         "text": "Para activar la funcionalidad, ejecutar el siguiente codigo",
-        "command": "/exec_sa texto" 
+        "command": "/sentimiento texto",
+        "response": {
+          "after_request": "🔍 Analizando texto, aguardá unos segundos...",
+          "error": "❌ Algo salio mal!! intentá nuevamente"
+        }        
       }        
     ]     
   },  
@@ -84,7 +96,13 @@
     "reference": "contacto",
     "title": "📞 Contacto",
     "text": "Dejenos su contacto",
-    "show": true
+    "show": true,
+    "response": {
+      "only_email": "Gracias por compartirnos tu email. \n Dejanos tu teléfono para contactarnos más rápido?",
+      "only_phone": "Gracias por compartirnos tu télefono. \n Dejanos tu email para completar nuestra base de datos?",
+      "all": "Gracias por compartirnos tus datos. \n Nos estámos comunicando pronto!!",
+      "default": "Me gustaría tener una respuesta, pero no la tengo 😞. \n\n Te dejo unos enlaces para que sigas interactuando en una forma que pueda entender"
+    }    
   },  
   "help": {
     "reference": "help",
