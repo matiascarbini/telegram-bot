@@ -1,1 +1,1 @@
-web: python bot.py -p 8443
+worker: python bot.py
