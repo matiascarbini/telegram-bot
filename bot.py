@@ -192,7 +192,7 @@ def solucionesDetail(update: Update, context: CallbackContext):
 def exec_br(update: Update, context: CallbackContext):
     context.bot.send_message(
       chat_id = update.effective_chat.id,
-      text = "✂️ Borrando fondo de la imagen, aguardá unos segundos...",
+      text = "✂️ Borrando fondo de la imagen, tardará unos segundos...",
       parse_mode=ParseMode.HTML
     )
       
@@ -203,27 +203,22 @@ def exec_br(update: Update, context: CallbackContext):
     data_json = {"image":image}
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post("http://179.43.121.48:301/background-remove", json = data_json, headers = headers)        
-    #res = json.loads(str(r.text))
-    print(r)
+    res = r.text
+        
     if r.status_code == 200:          
-      '''
       context.bot.send_message(
         chat_id = update.effective_chat.id,
-        text = textResult,
+        text = "Te envío la imagen sin fondo " + res,
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
       )
-      '''
     else:
-      '''      
       context.bot.send_message(
         chat_id = update.effective_chat.id,
         text = "Algo salio mal!! intentá nuevamente",
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
-      )
-      '''      
-
+      )      
 
 def exec_sa(update: Update, context: CallbackContext):
     context.bot.send_message(
