@@ -347,7 +347,7 @@ def main():
       updater.start_polling()
     else:
       updater.start_webhook(listen="0.0.0.0", 
-                            port=PORT, 
+                            port=int(PORT), 
                             url_path=TOKEN)
             
       updater.bot.setWebhook(URL_BASE + "/" + TOKEN)
