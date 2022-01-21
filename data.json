@@ -40,7 +40,7 @@
     "text": "Estos son nuestros productos",
     "show": true,
     "response": {
-      "end_list_products": "🔚 Listado completo de productos"
+      "end_list_products": "👉 Aca vas a poder encontrar el catálogo de productos completo"
     },
     "detail": [
       {

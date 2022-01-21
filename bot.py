@@ -3,8 +3,16 @@ import os
 import json
 import requests
 import re
+import urllib.request
+import string
+import random
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, CallbackContext
+
+# creo carpeta temporal
+import os
+if os.path.exists('./tmp') == False:
+  os.mkdir("./tmp")
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -192,7 +200,7 @@ def solucionesDetail(update: Update, context: CallbackContext):
     f.close()
 
 
-def exec_br(update: Update, context: CallbackContext):
+def exec_br(update: Update, context: CallbackContext, urlImage="", chatID=0):
   try:
     f = open(DATA_JSON)    
     data = json.load(f)
@@ -202,26 +210,47 @@ def exec_br(update: Update, context: CallbackContext):
       text = data['herramientas']['detail'][0]["response"]["after_request"],
       parse_mode=ParseMode.HTML
     )
-      
-    image = ' '.join(context.args)
-
-    reply_markup = getKeyboard('init')
+    
+    if urlImage:  
+      image = urlImage
+    else:
+      image = ' '.join(context.args)      
     
     data_json = {"image":image}
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post("http://179.43.121.48:301/background-remove", json = data_json, headers = headers)        
     res = r.text
-        
+
+    reply_markup = getKeyboard('init')
+    if not chatID:
+      sendChatID = update.effective_chat.id
+    else:
+      sendChatID = chatID
+    
     if r.status_code == 200:          
+      strRandom = ''
+      number_of_strings = 5
+      length_of_string = 8
+      for x in range(number_of_strings):
+        strRandom = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length_of_string))
+      
+      filename = './tmp/image_without_background_' + strRandom + '.png'
+      urllib.request.urlretrieve(res, filename)
+      
+      context.bot.send_document(
+        chat_id=sendChatID, 
+        document=open(filename, 'rb')
+      )
+ 
       context.bot.send_message(
-        chat_id = update.effective_chat.id,
+        chat_id = sendChatID,
         text = data['herramientas']['detail'][0]["response"]["request"] + ' ' + res,
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
       )
     else:
       context.bot.send_message(
-        chat_id = update.effective_chat.id,
+        chat_id = sendChatID,
         text = data['herramientas']['detail'][0]["response"]["error"],
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
@@ -232,8 +261,14 @@ def exec_br(update: Update, context: CallbackContext):
     f = open(DATA_JSON)    
     data = json.load(f)
     
+    reply_markup = getKeyboard('init')
+    if not chatID:
+      sendChatID = update.effective_chat.id   
+    else:
+      sendChatID = chatID
+           
     context.bot.send_message(
-      chat_id = update.effective_chat.id,
+      chat_id = sendChatID,
       text = data['herramientas']['detail'][0]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
@@ -289,7 +324,9 @@ def exec_sa(update: Update, context: CallbackContext):
   except:
     f = open(DATA_JSON)    
     data = json.load(f)
-        
+      
+    reply_markup = getKeyboard('init')
+      
     context.bot.send_message(
       chat_id = update.effective_chat.id,
       text = data['herramientas']['detail'][1]["response"]["error"],
@@ -412,6 +449,24 @@ def getPhone(text):
         
   return phone
 
+def getImage(update, context):
+  f = open(DATA_JSON)    
+  data = json.load(f)
+  
+  if update.message.caption == "/" + data['herramientas']['detail'][0]["reference"]:        
+    exec_br(update, context, context.bot.get_file(update.message.photo[-1]).file_path, update.message.chat.id)
+  else:    
+    reply_markup = getKeyboard('init')    
+    bot = context.bot
+    bot.send_message(
+      chat_id=update.message.chat_id, 
+      text=data['contacto']["response"]['default'],
+      parse_mode=ParseMode.HTML,
+      reply_markup=reply_markup
+    )
+    
+  f.close()
+
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
@@ -448,7 +503,7 @@ def main():
     
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
-    
+    dp.add_handler(MessageHandler(Filters.photo, getImage))
     
     # log all errors
     dp.add_error_handler(error)
