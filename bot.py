@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 # Variables globales
 PRODUTION = os.environ.get('PRODUTION', False)
 TOKEN = os.environ.get('TOKEN', '5087085476:AAEjL7-_iKsR8Z1KnIJp1yt4z2iDpHTktg8')
-PORT = os.environ.get('PORT', '8443')
-URL_BASE = os.environ.get('URL_BASE','')
+PORT = int(os.environ.get('PORT', '8443'))
+URL_BASE = os.environ.get('URL_BASE','http://localhost/')
 DATA_JSON = os.environ.get('DATA_JSON','data.json')
 
 # Define a few command handlers. These usually take the two arguments update and
@@ -448,7 +448,8 @@ def main():
     
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
-
+    
+    
     # log all errors
     dp.add_error_handler(error)
 
@@ -458,9 +459,8 @@ def main():
     else:
       updater.start_webhook(listen="0.0.0.0", 
                             port=PORT, 
-                            url_path=TOKEN)
-            
-      updater.bot.setWebhook(URL_BASE + "/" + TOKEN)
+                            url_path=TOKEN,
+                            webhook_url=URL_BASE + TOKEN)
       
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
