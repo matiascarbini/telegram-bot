@@ -109,10 +109,10 @@
     "text": "Dejenos su contacto",
     "show": true,
     "response": {
-      "only_email": "Gracias por compartirnos tu email. \n Dejanos tu teléfono para contactarnos más rápido?",
-      "only_phone": "Gracias por compartirnos tu télefono. \n Dejanos tu email para completar nuestra base de datos?",
-      "all": "Gracias por compartirnos tus datos. \n Nos estámos comunicando pronto!!",
-      "default": "Me gustaría tener una respuesta, pero no la tengo 😞. \n\n Te dejo unos enlaces para que sigas interactuando en una forma que pueda entender"
+      "only_email": "Gracias por compartirnos tu email. \nDejanos tu teléfono para contactarnos más rápido?",
+      "only_phone": "Gracias por compartirnos tu télefono. \nDejanos tu email para completar nuestra base de datos?",
+      "all": "Gracias por compartirnos tus datos. \nNos estámos comunicando pronto!!",
+      "default": "Me gustaría tener una respuesta, pero no la tengo 😞. \n\nTe dejo unos enlaces para que sigas interactuando en una forma que pueda entender"
     }    
   },  
   "help": {
