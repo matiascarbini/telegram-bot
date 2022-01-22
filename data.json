@@ -89,7 +89,18 @@
           "after_request": "🔍 Analizando texto, aguardá unos segundos...",
           "error": "❌ Algo salio mal!! intentá nuevamente"
         }        
-      }        
+      },
+      {
+        "reference": "nube",
+        "title": "Analisis de palábras",
+        "text": "Analiza todos los tweets realizado por un usuario y las agrupa en una nube de palabras mostrando las de más relevancia",
+        "command": "/nube usuario",
+        "response": {
+          "after_request": "🔍 Analizando tweets, aguardá unos segundos...",
+          "request": "Descargá la nube de palabras desde este link ",
+          "error": "❌ Algo salio mal!! intentá nuevamente"
+        }        
+      }                
     ]     
   },  
   "contacto": {

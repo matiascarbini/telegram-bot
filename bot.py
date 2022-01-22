@@ -133,7 +133,7 @@ def herramientas(update, context):
 
     text = ''
     for herramienta in data['herramientas']['detail']:      
-      text = text + "<b>" + herramienta["title"] + "</b>: " + herramienta["command"] + "\n"      
+      text = text + "<b>" + herramienta["title"] + "</b>: <i>" + herramienta["text"] + "</i> \n <code>" + herramienta["command"] + "</code> \n\n"      
       
     context.bot.send_message(
       chat_id = update.effective_chat.id,
@@ -293,7 +293,7 @@ def exec_sa(update: Update, context: CallbackContext):
     
     data_json = {"text":text}
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post("http://179.43.121.48:300/sentiment-analysis", json = data_json, headers = headers)        
+    r = requests.post("http://179.43.121.48:300/sentiment-analysis/text", json = data_json, headers = headers)        
     res = json.loads(str(r.text))
     
     if r.status_code == 200:
@@ -336,6 +336,70 @@ def exec_sa(update: Update, context: CallbackContext):
     
     f.close()      
 
+def exec_wc(update: Update, context: CallbackContext):
+  try:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+        
+    context.bot.send_message(
+      chat_id = update.effective_chat.id,
+      text = data['herramientas']['detail'][2]["response"]["after_request"],
+      parse_mode=ParseMode.HTML
+    )
+    
+    text = ' '.join(context.args)
+    
+    reply_markup = getKeyboard('init')
+    
+    data_json = {"user":text}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post("http://179.43.121.48:300/word-cloud/twitter/timeline", json = data_json, headers = headers)        
+    res = r.text
+    
+    if r.status_code == 200:          
+      strRandom = ''
+      number_of_strings = 5
+      length_of_string = 8
+      for x in range(number_of_strings):
+        strRandom = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length_of_string))
+      
+      filename = './tmp/image_word_cloud_' + strRandom + '.png'
+      urllib.request.urlretrieve(res, filename)
+      
+      context.bot.send_document(
+        chat_id=update.effective_chat.id, 
+        document=open(filename, 'rb')
+      )
+ 
+      context.bot.send_message(
+        chat_id = update.effective_chat.id,
+        text = data['herramientas']['detail'][2]["response"]["request"] + ' ' + res,
+        reply_markup=reply_markup,
+        parse_mode=ParseMode.HTML
+      )        
+    else:      
+      context.bot.send_message(
+        chat_id = update.effective_chat.id,        
+        text = data['herramientas']['detail'][2]["response"]["error"],
+        reply_markup=reply_markup,
+        parse_mode=ParseMode.HTML
+      ) 
+      
+    f.close()
+  except:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+      
+    reply_markup = getKeyboard('init')
+      
+    context.bot.send_message(
+      chat_id = update.effective_chat.id,
+      text = data['herramientas']['detail'][2]["response"]["error"],
+      reply_markup=reply_markup,
+      parse_mode=ParseMode.HTML
+    )    
+    
+    f.close()      
 
 def getKeyboard(renderKeyboard='init'):
     f = open(DATA_JSON)    
@@ -494,6 +558,7 @@ def main():
     dp.add_handler(CommandHandler(data['help']['reference'], help))
     dp.add_handler(CommandHandler(data['herramientas']["detail"][0]['reference'], exec_br))
     dp.add_handler(CommandHandler(data['herramientas']["detail"][1]['reference'], exec_sa))
+    dp.add_handler(CommandHandler(data['herramientas']["detail"][2]['reference'], exec_wc))
     
     #cierro el json de contenido
     f.close()
