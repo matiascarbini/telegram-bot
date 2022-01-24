@@ -6,6 +6,7 @@ import re
 import urllib.request
 import string
 import random
+import validators
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, CallbackContext
 
@@ -29,8 +30,7 @@ BOT_TRAINER = os.environ.get('BOT_TRAINER','botTrainer.txt')
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):    
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
 
     reply_markup = getKeyboard('page')
     
@@ -40,11 +40,9 @@ def start(update, context):
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
     )    
-    f.close()
 
 def nosotros(update, context):
-    f = open(DATA_JSON)    
-    data = json.load(f)    
+    data = getDataLoad() 
 
     reply_markup = getKeyboard('init')
       
@@ -55,11 +53,8 @@ def nosotros(update, context):
       parse_mode=ParseMode.HTML
     )
 
-    f.close()
-
 def soluciones(update, context):
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
 
     reply_markup = getKeyboard('solutions')
 
@@ -69,11 +64,9 @@ def soluciones(update, context):
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
     )
-    f.close()    
 
 def productos(update, context):
-    f = open(DATA_JSON)    
-    data = json.load(f)    
+    data = getDataLoad()    
 
     reply_markup = getKeyboard('init')
       
@@ -104,11 +97,8 @@ def productos(update, context):
       parse_mode=ParseMode.HTML
     )
 
-    f.close()
-
 def contacto(update, context):
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
  
     reply_markup = getKeyboard('init')
 
@@ -118,11 +108,9 @@ def contacto(update, context):
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
     )
-    f.close()
 
 def herramientas(update, context):
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
  
     reply_markup = getKeyboard('init')
 
@@ -143,11 +131,8 @@ def herramientas(update, context):
       reply_markup=reply_markup,
     )
 
-    f.close()
-
 def help(update, context):
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
             
     reply_markup = getKeyboard('page')
 
@@ -156,8 +141,7 @@ def help(update, context):
       text = data['help']['text'],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
-    )
-    f.close()   
+    ) 
 
 
 def clickButton(update: Update, context: CallbackContext):
@@ -185,8 +169,7 @@ def solucionesDetail(update: Update, context: CallbackContext):
     query = update.callback_query    
     query.answer()
     
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
     for solucion in data['soluciones']['detail']:
       if query.data == solucion['reference']:
         
@@ -198,13 +181,11 @@ def solucionesDetail(update: Update, context: CallbackContext):
           reply_markup=reply_markup,
           parse_mode=ParseMode.HTML
         )
-    f.close()
 
 
 def exec_br(update: Update, context: CallbackContext, urlImage="", chatID=0):
   try:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
         
     context.bot.send_message(
       chat_id = update.effective_chat.id,
@@ -256,11 +237,8 @@ def exec_br(update: Update, context: CallbackContext, urlImage="", chatID=0):
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
       )  
-      
-    f.close()    
   except:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
     
     reply_markup = getKeyboard('init')
     if not chatID:
@@ -273,14 +251,11 @@ def exec_br(update: Update, context: CallbackContext, urlImage="", chatID=0):
       text = data['herramientas']['detail'][0]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
-    )        
-    
-    f.close()    
+    )             
 
 def exec_sa(update: Update, context: CallbackContext):
   try:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
         
     context.bot.send_message(
       chat_id = update.effective_chat.id,
@@ -319,12 +294,9 @@ def exec_sa(update: Update, context: CallbackContext):
         text = data['herramientas']['detail'][1]["response"]["error"],
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
-      ) 
-      
-    f.close()
+      )       
   except:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
       
     reply_markup = getKeyboard('init')
       
@@ -333,14 +305,11 @@ def exec_sa(update: Update, context: CallbackContext):
       text = data['herramientas']['detail'][1]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
-    )    
-    
-    f.close()      
+    )      
 
 def exec_wc(update: Update, context: CallbackContext):
   try:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
         
     context.bot.send_message(
       chat_id = update.effective_chat.id,
@@ -384,12 +353,9 @@ def exec_wc(update: Update, context: CallbackContext):
         text = data['herramientas']['detail'][2]["response"]["error"],
         reply_markup=reply_markup,
         parse_mode=ParseMode.HTML
-      ) 
-      
-    f.close()
+      )       
   except:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
       
     reply_markup = getKeyboard('init')
       
@@ -398,18 +364,12 @@ def exec_wc(update: Update, context: CallbackContext):
       text = data['herramientas']['detail'][2]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
-    )    
-    
-    f.close()      
+    )           
 
 def exec_bt(update: Update, context: CallbackContext):
-  try:    
-    t = open(BOT_TRAINER, "r")    
-    trainer = t.read()
-    t.close()
-    
-    f = open(DATA_JSON)    
-    data = json.load(f)
+  try:        
+    trainer = getDataTrainer()
+    data = getDataLoad()
     
     context.bot.send_message(
       chat_id = update.effective_chat.id,
@@ -432,12 +392,9 @@ def exec_bt(update: Update, context: CallbackContext):
         chat_id = update.effective_chat.id,        
         text = data['herramientas']['detail'][3]["response"]["error"],
         parse_mode=ParseMode.HTML
-      ) 
-      
-    f.close()      
+      )       
   except:
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()   
       
     reply_markup = getKeyboard('init')
       
@@ -446,13 +403,10 @@ def exec_bt(update: Update, context: CallbackContext):
       text = data['herramientas']['detail'][3]["response"]["error"],
       reply_markup=reply_markup,
       parse_mode=ParseMode.HTML
-    )    
-    
-    f.close() 
+    )        
 
 def getKeyboard(renderKeyboard='init'):
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    data = getDataLoad()
 
     keyboardPage = []
     keyboardSetting = []
@@ -492,14 +446,32 @@ def getKeyboard(renderKeyboard='init'):
     else:
       reply_markup = InlineKeyboardMarkup(keyboardSetting)    
 
-    f.close()    
-
     return reply_markup
 
 
-def echo(update, context):
+def getDataLoad():
+  if validators.url(DATA_JSON):
+    data = json.load(urllib.request.urlopen(DATA_JSON))
+  else:
     f = open(DATA_JSON)    
     data = json.load(f)
+    f.close
+        
+  return data
+
+def getDataTrainer():
+  if validators.url(BOT_TRAINER):
+    data = urllib.request.urlopen(BOT_TRAINER).read().decode('utf-8')
+  else:
+    f = open(BOT_TRAINER, "r")    
+    data = f.read()
+    f.close()
+      
+  return data  
+  
+
+def echo(update, context):
+    data = getDataLoad()
       
     bot = context.bot
     
@@ -523,8 +495,7 @@ def echo(update, context):
           parse_mode=ParseMode.HTML
         )        
       else:    
-        f = open(DATA_JSON)    
-        data = json.load(f)
+        data = getDataLoad()
           
         reply_markup = getKeyboard('init')
           
@@ -533,9 +504,7 @@ def echo(update, context):
           text = data['contacto']["response"]['default'],
           reply_markup=reply_markup,
           parse_mode=ParseMode.HTML
-        )    
-        
-        f.close()            
+        )          
     else:
       if not 'email' in context.user_data.keys():
         context.user_data["email"] = '' 
@@ -554,9 +523,7 @@ def echo(update, context):
         chat_id=update.message.chat_id, 
         text=text,
         parse_mode=ParseMode.HTML
-      )
-      
-      f.close()
+      )      
       
 def getResposeMachineLearning(text):
   try:    
@@ -593,8 +560,7 @@ def getPhone(text):
   return phone
 
 def getImage(update, context):
-  f = open(DATA_JSON)    
-  data = json.load(f)
+  data = getDataLoad()
   
   if update.message.caption == "/" + data['herramientas']['detail'][0]["reference"]:        
     exec_br(update, context, context.bot.get_file(update.message.photo[-1]).file_path, update.message.chat.id)
@@ -606,9 +572,7 @@ def getImage(update, context):
       text=data['contacto']["response"]['default'],
       parse_mode=ParseMode.HTML,
       reply_markup=reply_markup
-    )
-    
-  f.close()
+    )    
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -623,9 +587,8 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
     
-    #abro el json de contenido
-    f = open(DATA_JSON)    
-    data = json.load(f)
+    #obtengo el contenido
+    data = getDataLoad()
     
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler(data['start']['reference'], start))    
@@ -639,10 +602,7 @@ def main():
     dp.add_handler(CommandHandler(data['herramientas']["detail"][1]['reference'], exec_sa))
     dp.add_handler(CommandHandler(data['herramientas']["detail"][2]['reference'], exec_wc))
     dp.add_handler(CommandHandler(data['herramientas']["detail"][3]['reference'], exec_bt))
-    
-    #cierro el json de contenido
-    f.close()
-    
+  
     # capturo el click
     updater.dispatcher.add_handler(CallbackQueryHandler(clickButton))
     
