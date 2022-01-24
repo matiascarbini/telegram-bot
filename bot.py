@@ -219,7 +219,7 @@ def exec_br(update: Update, context: CallbackContext, urlImage="", chatID=0):
     
     data_json = {"image":image}
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post("http://179.43.121.48:301/background-remove", json = data_json, headers = headers)        
+    r = requests.post("http://179.43.121.48:301/background/remove", json = data_json, headers = headers)        
     res = r.text
 
     reply_markup = getKeyboard('init')
