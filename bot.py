@@ -24,6 +24,7 @@ TOKEN = os.environ.get('TOKEN', '5087085476:AAEjL7-_iKsR8Z1KnIJp1yt4z2iDpHTktg8'
 PORT = int(os.environ.get('PORT', '8443'))
 URL_BASE = os.environ.get('URL_BASE','http://localhost/')
 DATA_JSON = os.environ.get('DATA_JSON','data.json')
+BOT_TRAINER = os.environ.get('BOT_TRAINER','botTrainer.txt')
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
@@ -401,6 +402,54 @@ def exec_wc(update: Update, context: CallbackContext):
     
     f.close()      
 
+def exec_bt(update: Update, context: CallbackContext):
+  try:    
+    t = open(BOT_TRAINER, "r")    
+    trainer = t.read()
+    t.close()
+    
+    f = open(DATA_JSON)    
+    data = json.load(f)
+    
+    context.bot.send_message(
+      chat_id = update.effective_chat.id,
+      text = data['herramientas']['detail'][3]["response"]["after_request"],
+      parse_mode=ParseMode.HTML
+    )
+        
+    data_json = {"list":trainer.split("\n")}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post("http://179.43.121.48:300/chatbot/trainer", json = data_json, headers = headers)        
+    
+    if r.status_code == 200:          
+      context.bot.send_message(
+        chat_id = update.effective_chat.id,
+        text = data['herramientas']['detail'][3]["response"]["request"],      
+        parse_mode=ParseMode.HTML
+      )     
+    else:      
+      context.bot.send_message(
+        chat_id = update.effective_chat.id,        
+        text = data['herramientas']['detail'][3]["response"]["error"],
+        parse_mode=ParseMode.HTML
+      ) 
+      
+    f.close()      
+  except:
+    f = open(DATA_JSON)    
+    data = json.load(f)
+      
+    reply_markup = getKeyboard('init')
+      
+    context.bot.send_message(
+      chat_id = update.effective_chat.id,
+      text = data['herramientas']['detail'][3]["response"]["error"],
+      reply_markup=reply_markup,
+      parse_mode=ParseMode.HTML
+    )    
+    
+    f.close() 
+
 def getKeyboard(renderKeyboard='init'):
     f = open(DATA_JSON)    
     data = json.load(f)
@@ -466,13 +515,27 @@ def echo(update, context):
       context.user_data["telefono"] = phone
     
     if not email and not phone:
-      reply_markup = getKeyboard('init')
-      bot.send_message(
-        chat_id=update.message.chat_id, 
-        text=data['contacto']["response"]['default'],
-        parse_mode=ParseMode.HTML,
-        reply_markup=reply_markup
-      )
+      response = getResposeMachineLearning(update.message.text)      
+      if response:
+        context.bot.send_message(
+          chat_id = update.effective_chat.id,
+          text = response,
+          parse_mode=ParseMode.HTML
+        )        
+      else:    
+        f = open(DATA_JSON)    
+        data = json.load(f)
+          
+        reply_markup = getKeyboard('init')
+          
+        context.bot.send_message(
+          chat_id = update.effective_chat.id,
+          text = data['contacto']["response"]['default'],
+          reply_markup=reply_markup,
+          parse_mode=ParseMode.HTML
+        )    
+        
+        f.close()            
     else:
       if not 'email' in context.user_data.keys():
         context.user_data["email"] = '' 
@@ -494,6 +557,22 @@ def echo(update, context):
       )
       
       f.close()
+      
+def getResposeMachineLearning(text):
+  try:    
+    data_json = {"question":text}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post("http://179.43.121.48:300/chatbot/answer", json = data_json, headers = headers)        
+    res = r.text
+    
+    if r.status_code == 200:          
+      return res     
+    else:      
+      return ''
+      
+  except:
+    return ''
+
   
 def getEmail(text):
   email = ''
@@ -559,6 +638,7 @@ def main():
     dp.add_handler(CommandHandler(data['herramientas']["detail"][0]['reference'], exec_br))
     dp.add_handler(CommandHandler(data['herramientas']["detail"][1]['reference'], exec_sa))
     dp.add_handler(CommandHandler(data['herramientas']["detail"][2]['reference'], exec_wc))
+    dp.add_handler(CommandHandler(data['herramientas']["detail"][3]['reference'], exec_bt))
     
     #cierro el json de contenido
     f.close()
