@@ -20,12 +20,12 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Variables globales
-PRODUTION = os.environ.get('PRODUTION', False)
-TOKEN = os.environ.get('TOKEN', '5087085476:AAEjL7-_iKsR8Z1KnIJp1yt4z2iDpHTktg8')
-PORT = int(os.environ.get('PORT', '8443'))
-URL_BASE = os.environ.get('URL_BASE','http://localhost/')
-DATA_JSON = os.environ.get('DATA_JSON','data.json')
-BOT_TRAINER = os.environ.get('BOT_TRAINER','botTrainer.txt')
+PRODUTION = os.environ.get('PRODUTION')
+TOKEN = os.environ.get('TOKEN')
+PORT = int(os.environ.get('PORT'))
+URL_BASE = os.environ.get('URL_BASE')
+DATA_JSON = os.environ.get('DATA_JSON')
+BOT_TRAINER = os.environ.get('BOT_TRAINER')
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
